@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi;
 using Scalar.AspNetCore;
 using Serilog;
+using Shortly.Application.Commands;
 using Shortly.Application.Interfaces;
 using Shortly.Application.Services;
 using Shortly.Endpoints;
@@ -75,6 +76,10 @@ builder.Services.AddScoped<ILinkRepository, LinkRepository>();
 builder.Services.AddScoped<ILinkWriteRepository, LinkWriteRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILinkService, LinkService>();
+
+// Registers Command Handlers
+builder.Services.AddScoped<CreateLinkCommandHandler>();
+builder.Services.AddScoped<IncrementClicksCommandHandler>();
 
 // Builds the application with all registered configurations
 var app = builder.Build();
