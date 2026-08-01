@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Shortly.Domain.Entities;
 
 namespace Shortly.Infrastructure.Persistence;
@@ -12,4 +12,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     public DbSet<User> Users { get; private set; } = null!;
 
     public DbSet<Link> Links { get; private set; } = null!;
+
+    public DbSet<LinkReadModel> LinkReadModels { get; private set; } = null!;
 }
