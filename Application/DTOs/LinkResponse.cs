@@ -15,4 +15,12 @@ public class LinkResponse
         ShortUrl = link.ShortUrl,
         Clicks = link.Clicks
     };
+
+    public static LinkResponse From(LinkReadModel readModel) => new()
+    {
+        Id = readModel.Id,
+        Url = readModel.OriginalUrl,
+        ShortUrl = readModel.ShortUrl,
+        Clicks = readModel.Clicks
+    };
 }
