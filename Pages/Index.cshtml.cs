@@ -4,18 +4,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Shortly.Application.Commands;
 using Shortly.Application.DTOs;
-using Shortly.Application.Interfaces;
+using Shortly.Application.Queries;
 
 namespace Shortly.Pages;
 
 public class IndexModel : PageModel
 {
-    private readonly ILinkService _linkService;
+    private readonly GetLinksByUserIdQueryHandler _getLinksByUserIdQueryHandler;
     private readonly CreateLinkCommandHandler _createLinkCommandHandler;
 
-    public IndexModel(ILinkService linkService, CreateLinkCommandHandler createLinkCommandHandler)
+    public IndexModel(GetLinksByUserIdQueryHandler getLinksByUserIdQueryHandler, CreateLinkCommandHandler createLinkCommandHandler)
     {
-        _linkService = linkService;
+        _getLinksByUserIdQueryHandler = getLinksByUserIdQueryHandler;
         _createLinkCommandHandler = createLinkCommandHandler;
     }
 
@@ -33,7 +33,7 @@ public class IndexModel : PageModel
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (userIdClaim is not null && long.TryParse(userIdClaim, out var userId))
             {
-                Links = await _linkService.GetLinksByUserId(userId);
+                Links = await _getLinksByUserIdQueryHandler.HandleAsync(new GetLinksByUserIdQuery(userId));
             }
         }
     }
