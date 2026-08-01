@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Shortly.Application.Commands;
 using Shortly.Application.DTOs;
 using Shortly.Application.Interfaces;
 
@@ -10,10 +11,12 @@ namespace Shortly.Pages;
 public class IndexModel : PageModel
 {
     private readonly ILinkService _linkService;
+    private readonly CreateLinkCommandHandler _createLinkCommandHandler;
 
-    public IndexModel(ILinkService linkService)
+    public IndexModel(ILinkService linkService, CreateLinkCommandHandler createLinkCommandHandler)
     {
         _linkService = linkService;
+        _createLinkCommandHandler = createLinkCommandHandler;
     }
 
     [BindProperty]
@@ -47,7 +50,7 @@ public class IndexModel : PageModel
         if (userIdClaim is null || !long.TryParse(userIdClaim, out var userId))
             return Challenge();
 
-        await _linkService.CreateLink(OriginalUrl, userId);
+        await _createLinkCommandHandler.HandleAsync(new CreateLinkCommand(OriginalUrl, userId));
         return RedirectToPage();
     }
 }
