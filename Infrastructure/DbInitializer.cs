@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Shortly.Domain.Entities;
 using Shortly.Infrastructure.Persistence;
 
@@ -16,12 +16,22 @@ public static class DbInitializer
         db.Users.Add(user);
         await db.SaveChangesAsync();
 
-        db.Links.AddRange(
+        var initialLinks = new[]
+        {
             new Link("https://learn.microsoft.com/aspnet/core", "aspnet", user.Id),
             new Link("https://learn.microsoft.com/ef/core", "efcore", user.Id),
             new Link("https://github.com", "github", user.Id)
-        );
+        };
 
+        db.Links.AddRange(initialLinks);
         await db.SaveChangesAsync();
+
+        if (!await db.LinkReadModels.AnyAsync())
+        {
+            db.LinkReadModels.AddRange(
+                initialLinks.Select(l => new LinkReadModel(l.Id, l.Url, l.ShortUrl, l.Clicks, l.UserId))
+            );
+            await db.SaveChangesAsync();
+        }
     }
 }

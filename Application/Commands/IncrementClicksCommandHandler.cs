@@ -7,11 +7,16 @@ namespace Shortly.Application.Commands;
 public sealed class IncrementClicksCommandHandler
 {
     private readonly ILinkWriteRepository _linkRepository;
+    private readonly ILinkReadRepository _readRepository;
     private readonly ILogger<IncrementClicksCommandHandler> _logger;
 
-    public IncrementClicksCommandHandler(ILinkWriteRepository linkRepository, ILogger<IncrementClicksCommandHandler> logger)
+    public IncrementClicksCommandHandler(
+        ILinkWriteRepository linkRepository,
+        ILinkReadRepository readRepository,
+        ILogger<IncrementClicksCommandHandler> logger)
     {
         _linkRepository = linkRepository ?? throw new ArgumentNullException(nameof(linkRepository));
+        _readRepository = readRepository ?? throw new ArgumentNullException(nameof(readRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -28,6 +33,13 @@ public sealed class IncrementClicksCommandHandler
 
         link.IncrementClicks();
         await _linkRepository.SaveChangesAsync();
+
+        var readModel = await _readRepository.GetByIdAsync(command.LinkId);
+        if (readModel is not null)
+        {
+            readModel.Clicks = link.Clicks;
+            await _readRepository.UpdateAsync(readModel);
+        }
 
         _logger.LogInformation("Clicks incremented for linkId: {LinkId}. Total clicks: {Clicks}.", link.Id, link.Clicks);
         return LinkResponse.From(link);

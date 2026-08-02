@@ -14,6 +14,9 @@ public sealed class LinkReadRepository : ILinkReadRepository
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
+    public Task<LinkReadModel?> GetByIdAsync(long id)
+        => _context.LinkReadModels.FirstOrDefaultAsync(l => l.Id == id);
+
     public Task<LinkReadModel?> GetByShortUrlAsync(string shortUrl)
         => _context.LinkReadModels
             .AsNoTracking()
@@ -29,4 +32,16 @@ public sealed class LinkReadRepository : ILinkReadRepository
             .AsNoTracking()
             .Where(l => l.UserId == userId)
             .ToListAsync();
+
+    public async Task AddAsync(LinkReadModel readModel)
+    {
+        await _context.LinkReadModels.AddAsync(readModel);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task UpdateAsync(LinkReadModel readModel)
+    {
+        _context.LinkReadModels.Update(readModel);
+        await _context.SaveChangesAsync();
+    }
 }

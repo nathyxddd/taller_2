@@ -8,12 +8,17 @@ namespace Shortly.Application.Commands;
 public sealed class CreateLinkCommandHandler
 {
     private readonly ILinkWriteRepository _linkRepository;
+    private readonly ILinkReadRepository _readRepository;
     private readonly ILogger<CreateLinkCommandHandler> _logger;
 
-    public CreateLinkCommandHandler(ILinkWriteRepository linkRepository, ILogger<CreateLinkCommandHandler> _logger)
+    public CreateLinkCommandHandler(
+        ILinkWriteRepository linkRepository,
+        ILinkReadRepository readRepository,
+        ILogger<CreateLinkCommandHandler> logger)
     {
-        this._linkRepository = linkRepository ?? throw new ArgumentNullException(nameof(linkRepository));
-        this._logger = _logger ?? throw new ArgumentNullException(nameof(_logger));
+        _linkRepository = linkRepository ?? throw new ArgumentNullException(nameof(linkRepository));
+        _readRepository = readRepository ?? throw new ArgumentNullException(nameof(readRepository));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     public async Task<LinkResponse> HandleAsync(CreateLinkCommand command)
@@ -25,6 +30,9 @@ public sealed class CreateLinkCommandHandler
 
         await _linkRepository.AddAsync(link);
         await _linkRepository.SaveChangesAsync();
+
+        var readModel = new LinkReadModel(link.Id, link.Url, link.ShortUrl, link.Clicks, link.UserId);
+        await _readRepository.AddAsync(readModel);
 
         _logger.LogInformation("Link created successfully with shortUrl: {ShortUrl} and id: {Id}.", link.ShortUrl, link.Id);
         return LinkResponse.From(link);
