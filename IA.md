@@ -1,7 +1,5 @@
 # Uso de Inteligencia Artificial - Taller 2
 
-
-
 ### 1. Consulta:
 "¿Cuál es la diferencia conceptual entre el modelo de comando y el modelo de consulta en CQRS? Explica con un ejemplo de una base de datos relacional por qué no deberíamos usar la misma entidad de base de datos para lectura y escritura."
 
@@ -14,8 +12,6 @@
 ### 4. Consulta:
 "¿Cómo estructurar un repositorio de solo lectura en EF Core usando AsNoTracking y omitiendo métodos como SaveChanges para garantizar que sea de solo lectura?"
 
-
-
 ### 5. Consulta:
 "Cómo definir una entidad de lectura desnormalizada LinkReadModel en Entity Framework Core, optimizada exclusivamente para consultas sin sobrecargar la entidad de dominio de escritura?"
 
@@ -27,4 +23,3 @@
 
 ### 8. Consulta:
 "Cómo refactorizar los controladores/vistas en Index.cshtml.cs y los endpoints en UrlRedirectEndpoint.cs para inyectar los Query Handlers en lugar de depender del servicio antiguo ILinkService?"
-
